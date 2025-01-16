@@ -1,5 +1,12 @@
+import { useEffect } from "react";
+
 export default function CustomerListPage() {
-    return <>
-        <i>Todo customers</i>
+  useEffect(() => {
+    console.log("okkk");
+  }, []);
+  return (
+    <>
+      <h1>customers</h1>
     </>
+  );
 }

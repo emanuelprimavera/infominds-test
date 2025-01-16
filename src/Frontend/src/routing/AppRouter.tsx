@@ -3,6 +3,7 @@ import HomePage from "../pages/HomePage";
 import CustomerListPage from "../pages/CustomerListPage";
 import EmployeeListPage from "../pages/EmployeeListPage";
 import SupplierListPage from "../pages/SupplierListPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 export default function AppRoutes() {
   return (
@@ -11,7 +12,7 @@ export default function AppRoutes() {
       <Route path="/SupplierList" element={<SupplierListPage />} />
       <Route path="/CustomerList" element={<CustomerListPage />} />
       <Route path="/EmployeeList" element={<EmployeeListPage />} />
-      
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
