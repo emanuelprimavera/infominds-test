@@ -16,7 +16,7 @@ import {
   TableCell,
 } from "@mui/material";
 import Loading from "../components/Loading";
-import { StyledTableHeadCell } from "../helpers/variables";
+import { StyledTableHeadCell } from "../helpers/stylesVariables";
 
 export default function CustomerListPage() {
   const navigate = useNavigate();

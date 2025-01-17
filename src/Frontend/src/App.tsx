@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Alert, Container, Snackbar, SnackbarCloseReason } from "@mui/material";
+import { Container, Snackbar, SnackbarCloseReason } from "@mui/material";
 import AppRoutes from "./routing/AppRouter";
 import ShellHeader from "./routing/ShellHeader";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -21,7 +21,6 @@ function App() {
   };
   const [openToast, setOpenToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
-  // CONTEXT VALUES
   const contextValue = {
     openToast,
     setOpenToast,

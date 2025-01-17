@@ -15,7 +15,7 @@ import { suppliers_endpoint } from "../helpers/endpoint";
 import Loading from "../components/Loading";
 import { AppContext } from "../helpers/appContext";
 import { SupplierListQuery } from "../helpers/interfaces";
-import { StyledTableHeadCell } from "../helpers/variables";
+import { StyledTableHeadCell } from "../helpers/stylesVariables";
 import { useNavigate } from "react-router-dom";
 
 export default function SupplierListPage() {

@@ -3,6 +3,7 @@ namespace Backend.Features.Customers;
 
 public class CustomersListQuery : IRequest<List<CustomerssListQueryResponse>>
 {
+    //get prende il nome set lo assegna
     public string? Name { get; set; }
     public string? Email { get; set; }
 }
@@ -33,6 +34,7 @@ public async Task<List<CustomerssListQueryResponse>> Handle(CustomersListQuery r
 
 {
       var query = context.Customers.AsQueryable();
+      // filtri
       if (!string.IsNullOrEmpty(request.Name))
             query = query.Where(q => q.Name.ToLower().Contains(request.Name.ToLower()));
         if (!string.IsNullOrEmpty(request.Email))

@@ -41,7 +41,6 @@ export interface CustomersListQuery {
   iban: string;
   category: CustomersCategory;
 }
-
 interface CustomersCategory {
   code: string;
   description: string;

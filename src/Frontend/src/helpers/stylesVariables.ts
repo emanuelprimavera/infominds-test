@@ -18,3 +18,13 @@ export const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
+
+export const bigButton = {
+  background: "#008000",
+  width: "100%",
+  display: "inline-block",
+  textAlign: "center",
+  padding: 2,
+  color: "white",
+  textDecoration: "none",
+};

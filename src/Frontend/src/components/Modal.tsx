@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography, Modal as MuiModal } from "@mui/material";
-import { modalStyle } from "../helpers/variables";
+import { modalStyle } from "../helpers/stylesVariables";
 import { ModalInterface } from "../helpers/interfaces";
 
 const Modal = (props: ModalInterface) => {

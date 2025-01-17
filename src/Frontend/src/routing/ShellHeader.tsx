@@ -15,7 +15,9 @@ export default function ShellHeader() {
             <HeaderButton to="/SupplierList">Suppliers</HeaderButton>
             <HeaderButton to="/CustomerList">Customers</HeaderButton>
             <HeaderButton to="/EmployeeList">Employees</HeaderButton>
-            <HeaderLinkButton href="/swagger" variant="outlined">Swagger UI</HeaderLinkButton>
+            <HeaderLinkButton href="/swagger" variant="outlined">
+              Swagger UI
+            </HeaderLinkButton>
           </Box>
         </Toolbar>
       </AppBar>

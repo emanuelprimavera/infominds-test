@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../helpers/appContext";
 import axios from "axios";
 import Loading from "../components/Loading";
-import { StyledTableHeadCell } from "../helpers/variables";
+import { bigButton, StyledTableHeadCell } from "../helpers/stylesVariables";
 import { employees_endpoint } from "../helpers/endpoint";
 import { EmployeeListQuery } from "../helpers/interfaces";
 import xml2js from "xml2js";
@@ -96,13 +96,13 @@ export default function EmployeeListPage() {
         })),
       },
     };
-    // buildo xml come stringa per metterla nel BLOB (il BLOB puo contenere qualsiasi dato binario, in questo caso è una stringa)
+    // genero stringa xml per metterla nel BLOB (il BLOB puo contenere qualsiasi tipo di dato, in questo caso è una stringa)
     const xmlData = builder.buildObject(data);
 
-    // creo il BLOB
+    // creo il BLOB e indico nel type il tipo di dato che è xmlData. creando il blob il browser puo "trattarlo" come un file
     const blob = new Blob([xmlData], { type: "application/xml" });
 
-    // il browser ha bisogno di un link per scaricare il BLOB quindi lo creo e lo salvo nello state
+    // il browser ha bisogno di un link (temporaneo) per scaricare il BLOB quindi lo creo e lo salvo nello state
     setXmlURL(URL.createObjectURL(blob));
     setOpenModal(true);
   };
@@ -239,15 +239,7 @@ export default function EmployeeListPage() {
               href={xmlURL}
               download
               onClick={handleModalClose}
-              sx={{
-                background: "#008000",
-                width: "100%",
-                display: "inline-block",
-                textAlign: "center",
-                padding: 2,
-                color: "white",
-                textDecoration: "none",
-              }}
+              sx={bigButton}
             >
               DOWNLOAD
             </Link>
