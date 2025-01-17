@@ -19,10 +19,8 @@ function App() {
 
     setOpenToast(false);
   };
-
   const [openToast, setOpenToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
-
   // CONTEXT VALUES
   const contextValue = {
     openToast,

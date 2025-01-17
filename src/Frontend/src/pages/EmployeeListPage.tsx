@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../helpers/appContext";
 import axios from "axios";
 import Loading from "../components/Loading";
-import { modalStyle, StyledTableHeadCell } from "../helpers/variables";
+import { StyledTableHeadCell } from "../helpers/variables";
 import { employees_endpoint } from "../helpers/endpoint";
 import { EmployeeListQuery } from "../helpers/interfaces";
 import xml2js from "xml2js";
@@ -49,10 +49,8 @@ export default function EmployeeListPage() {
           LastName: surname_,
         },
       });
-      console.log(resp.data);
       setEmpoyees(resp.data as EmployeeListQuery[]);
     } catch (error: unknown) {
-      console.log(error);
       setOpenToast(true);
       setToastMessage("ERRORE chiamata fetchEmployees");
       navigate("/");
@@ -78,7 +76,7 @@ export default function EmployeeListPage() {
   // ----------------  XML ----------------
 
   const generateXML = () => {
-    // instanzio il builder
+    // istanzio il builder
     const builder = new xml2js.Builder();
 
     // struttura del documento xml
@@ -98,7 +96,6 @@ export default function EmployeeListPage() {
         })),
       },
     };
-    console.log(data);
     // buildo xml come stringa per metterla nel BLOB (il BLOB puo contenere qualsiasi dato binario, in questo caso è una stringa)
     const xmlData = builder.buildObject(data);
 
@@ -107,7 +104,6 @@ export default function EmployeeListPage() {
 
     // il browser ha bisogno di un link per scaricare il BLOB quindi lo creo e lo salvo nello state
     setXmlURL(URL.createObjectURL(blob));
-    console.log(xmlURL);
     setOpenModal(true);
   };
 

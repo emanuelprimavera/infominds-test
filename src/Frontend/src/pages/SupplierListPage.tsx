@@ -28,10 +28,8 @@ export default function SupplierListPage() {
     const fetchSuppliers = async () => {
       try {
         const resp = await axios.get(suppliers_endpoint);
-        console.log(resp);
         setList(resp.data as SupplierListQuery[]);
       } catch (error: unknown) {
-        console.log(error);
         setOpenToast(true);
         setToastMessage("ERRORE chiamata fetchSuppliers");
         navigate("/");

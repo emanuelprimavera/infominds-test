@@ -7,6 +7,7 @@ public class BackendContext(DbContextOptions<BackendContext> options) : DbContex
     public DbSet<CustomerCategory> CustomerCategories => Set<CustomerCategory>();
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<Department> Departments => Set<Department>();
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
