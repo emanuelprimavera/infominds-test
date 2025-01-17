@@ -4,7 +4,7 @@ const Loading = () => {
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: "50vh",
         justifyContent: "center",
         alignItems: "center",
         display: "flex",

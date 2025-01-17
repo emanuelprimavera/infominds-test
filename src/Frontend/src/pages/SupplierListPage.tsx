@@ -16,8 +16,10 @@ import Loading from "../components/Loading";
 import { AppContext } from "../helpers/appContext";
 import { SupplierListQuery } from "../helpers/interfaces";
 import { StyledTableHeadCell } from "../helpers/variables";
+import { useNavigate } from "react-router-dom";
 
 export default function SupplierListPage() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const { setOpenToast, setToastMessage } = useContext(AppContext);
   const [list, setList] = useState<SupplierListQuery[]>([]);
@@ -32,6 +34,7 @@ export default function SupplierListPage() {
         console.log(error);
         setOpenToast(true);
         setToastMessage("ERRORE chiamata fetchSuppliers");
+        navigate("/");
       } finally {
         setLoading(false);
       }
@@ -41,40 +44,37 @@ export default function SupplierListPage() {
 
   return (
     <>
+      <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
+        Suppliers
+      </Typography>
       {loading ? (
         <Loading />
       ) : (
-        <>
-          <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
-            Suppliers
-          </Typography>
-
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableHeadCell>Name</StyledTableHeadCell>
-                  <StyledTableHeadCell>Address</StyledTableHeadCell>
-                  <StyledTableHeadCell>Email</StyledTableHeadCell>
-                  <StyledTableHeadCell>Phone</StyledTableHeadCell>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <StyledTableHeadCell>Name</StyledTableHeadCell>
+                <StyledTableHeadCell>Address</StyledTableHeadCell>
+                <StyledTableHeadCell>Email</StyledTableHeadCell>
+                <StyledTableHeadCell>Phone</StyledTableHeadCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {list?.map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.address}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.phone}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {list?.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.address}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
     </>
   );

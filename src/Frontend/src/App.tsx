@@ -1,4 +1,5 @@
-import { Container, Snackbar, SnackbarCloseReason } from "@mui/material";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Alert, Container, Snackbar, SnackbarCloseReason } from "@mui/material";
 import AppRoutes from "./routing/AppRouter";
 import ShellHeader from "./routing/ShellHeader";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -7,8 +8,7 @@ import { AppContext } from "./helpers/appContext";
 import { useState } from "react";
 
 function App() {
-  const [openToast, setOpenToast] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
+  // FUNZIONE PER CHIUDERE IL TOAST DI MUI
   const handleCloseToast = (
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
@@ -19,13 +19,17 @@ function App() {
 
     setOpenToast(false);
   };
+
+  const [openToast, setOpenToast] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+
+  // CONTEXT VALUES
   const contextValue = {
     openToast,
     setOpenToast,
     toastMessage,
     setToastMessage,
   };
-
   return (
     <AppContext.Provider value={contextValue}>
       <CssBaseline />
@@ -35,7 +39,7 @@ function App() {
           <AppRoutes />
           <Snackbar
             open={openToast}
-            autoHideDuration={3000}
+            autoHideDuration={2000}
             message={toastMessage}
             onClose={handleCloseToast}
           />
