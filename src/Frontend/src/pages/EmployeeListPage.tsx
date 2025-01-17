@@ -12,29 +12,34 @@ import {
   Box,
   Button,
   Alert,
+  Link,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../helpers/appContext";
 import axios from "axios";
 import Loading from "../components/Loading";
-import { StyledTableHeadCell } from "../helpers/variables";
+import { modalStyle, StyledTableHeadCell } from "../helpers/variables";
 import { employees_endpoint } from "../helpers/endpoint";
 import { EmployeeListQuery } from "../helpers/interfaces";
+import xml2js from "xml2js";
+import Modal from "../components/Modal";
 
 export default function EmployeeListPage() {
+  const { setOpenToast, setToastMessage } = useContext(AppContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
   const [employees, setEmpoyees] = useState<EmployeeListQuery[]>([]);
-  const { setOpenToast, setToastMessage } = useContext(AppContext);
+  const [showAll, setShowAll] = useState<boolean>(false);
+  const [xmlURL, setXmlURL] = useState<string | undefined>("");
+  const [openModal, setOpenModal] = useState(false);
+  const handleModalClose = () => setOpenModal(false);
 
-  interface fetchEmployees {
-    name_?: string;
-    surname_?: string;
-  }
+  // ---------------- FILTRI ----------------
 
+  // prendo lista dipendenti
   const fetchEmployees = async (name_?: string, surname_?: string) => {
     setLoading(true);
     try {
@@ -56,14 +61,54 @@ export default function EmployeeListPage() {
     }
   };
 
+  // chiamata ai dipententi filtrata
   const fetchFilterEmployees = async () => {
     await fetchEmployees(name.trim(), surname.trim());
+    setShowAll(true);
   };
 
+  // reset filtro dipendenti
   const resetFilterEmpolyees = async () => {
     await fetchEmployees();
     setName("");
     setSurname("");
+    setShowAll(false);
+  };
+
+  // ----------------  XML ----------------
+
+  const generateXML = () => {
+    // instanzio il builder
+    const builder = new xml2js.Builder();
+
+    // struttura del documento xml
+    const data = {
+      employees: {
+        employee: employees?.slice(0, 10).map((employe) => ({
+          id: employe.id,
+          firstName: employe.firstName,
+          lastName: employe.lastName,
+          address: employe.address,
+          email: employe.email,
+          phone: employe.phone,
+          department: {
+            code: employe.department?.code,
+            description: employe.department?.description,
+          },
+        })),
+      },
+    };
+    console.log(data);
+    // buildo xml come stringa per metterla nel BLOB (il BLOB puo contenere qualsiasi dato binario, in questo caso è una stringa)
+    const xmlData = builder.buildObject(data);
+
+    // creo il BLOB
+    const blob = new Blob([xmlData], { type: "application/xml" });
+
+    // il browser ha bisogno di un link per scaricare il BLOB quindi lo creo e lo salvo nello state
+    setXmlURL(URL.createObjectURL(blob));
+    console.log(xmlURL);
+    setOpenModal(true);
   };
 
   useEffect(() => {
@@ -91,13 +136,15 @@ export default function EmployeeListPage() {
           }}
         >
           <Input
-            aria-label="nome impiegato"
+            disabled={showAll}
+            aria-label="nome dipendente"
             placeholder="Cerca per nome"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <Input
-            aria-label="cognome impiegato"
+            disabled={showAll}
+            aria-label="cognome dipendente"
             placeholder="Cerca per cognome"
             value={surname}
             onChange={(e) => setSurname(e.target.value)}
@@ -113,7 +160,11 @@ export default function EmployeeListPage() {
           <Button
             variant="contained"
             onClick={fetchFilterEmployees}
-            disabled={(name.trim() === "" && surname.trim() === "") || loading}
+            disabled={
+              (name.trim() === "" && surname.trim() === "") ||
+              loading ||
+              showAll
+            }
           >
             Cerca
           </Button>
@@ -121,16 +172,18 @@ export default function EmployeeListPage() {
           <Button
             variant="contained"
             onClick={resetFilterEmpolyees}
-            disabled={loading}
+            disabled={!showAll || loading}
           >
             Mostra tutti
           </Button>
+
           <Button
             variant="contained"
             sx={{ backgroundColor: "green" }}
             disabled={loading}
+            onClick={generateXML}
           >
-            Scarica EXCEL
+            Genera XML
           </Button>
         </Box>
       </Box>
@@ -139,9 +192,14 @@ export default function EmployeeListPage() {
         <Loading />
       ) : (
         <>
+          {showAll && employees.length > 0 && (
+            <Alert severity="info" sx={{ marginBottom: 4 }}>
+              Risultati per: {name} {surname}
+            </Alert>
+          )}
           {employees.length === 0 && (
             <Alert severity="error" sx={{ marginBottom: 4 }}>
-              Nessun impiegato trovato.
+              Nessun dipendente trovato.
             </Alert>
           )}
           <TableContainer component={Paper}>
@@ -178,6 +236,26 @@ export default function EmployeeListPage() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* MODALE PER DOWNLOAD XML */}
+          <Modal open={openModal} close={handleModalClose} title="Scarica XML">
+            <Link
+              href={xmlURL}
+              download
+              onClick={handleModalClose}
+              sx={{
+                background: "#008000",
+                width: "100%",
+                display: "inline-block",
+                textAlign: "center",
+                padding: 2,
+                color: "white",
+                textDecoration: "none",
+              }}
+            >
+              DOWNLOAD
+            </Link>
+          </Modal>
         </>
       )}
     </>

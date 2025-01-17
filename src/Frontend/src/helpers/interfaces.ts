@@ -30,3 +30,11 @@ interface EmployeeDepartment {
   code?: string;
   description?: string;
 }
+
+// MODAL
+export interface ModalInterface {
+  open: boolean;
+  close: (value: boolean) => void;
+  title?: string;
+  children?: React.ReactNode;
+}
