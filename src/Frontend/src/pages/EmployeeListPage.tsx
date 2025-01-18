@@ -21,7 +21,7 @@ import axios from "axios";
 import Loading from "../components/Loading";
 import { bigButton, StyledTableHeadCell } from "../helpers/stylesVariables";
 import { employees_endpoint } from "../helpers/endpoint";
-import { EmployeeListQuery } from "../helpers/interfaces";
+import { employee } from "../helpers/interfaces";
 import xml2js from "xml2js";
 import Modal from "../components/Modal";
 
@@ -31,35 +31,38 @@ export default function EmployeeListPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
-  const [employees, setEmpoyees] = useState<EmployeeListQuery[]>([]);
+  const [employees, setEmpoyees] = useState<employee[]>([]);
   const [showAll, setShowAll] = useState<boolean>(false);
   const [xmlURL, setXmlURL] = useState<string | undefined>("");
   const [openModal, setOpenModal] = useState(false);
   const handleModalClose = () => setOpenModal(false);
 
-  // ---------------- FILTRI ----------------
-
-  // prendo lista dipendenti
-  const fetchEmployees = async (name_?: string, surname_?: string) => {
+  // GET DIPENDENTI
+  const fetchEmployees = async (name?: string, surname?: string) => {
     setLoading(true);
     try {
       const resp = await axios.get(employees_endpoint, {
         params: {
-          FirstName: name_,
-          LastName: surname_,
+          FirstName: name,
+          LastName: surname,
         },
       });
-      setEmpoyees(resp.data as EmployeeListQuery[]);
+      setEmpoyees(resp.data as employee[]);
     } catch (error: unknown) {
       setOpenToast(true);
-      setToastMessage("ERRORE chiamata fetchEmployees");
-      navigate("/");
+      setToastMessage(
+        axios.isAxiosError(error)
+          ? error.message
+          : "ERRORE chiamata fetchEmployees"
+      );
+      // navigate("/");
     } finally {
       setLoading(false);
     }
   };
 
-  // chiamata ai dipententi filtrata
+  // ---------------- FILTRI ----------------
+
   const fetchFilterEmployees = async () => {
     await fetchEmployees(name.trim(), surname.trim());
     setShowAll(true);

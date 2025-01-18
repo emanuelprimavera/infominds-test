@@ -14,25 +14,26 @@ import { useContext, useEffect, useState } from "react";
 import { suppliers_endpoint } from "../helpers/endpoint";
 import Loading from "../components/Loading";
 import { AppContext } from "../helpers/appContext";
-import { SupplierListQuery } from "../helpers/interfaces";
+import { supplier } from "../helpers/interfaces";
 import { StyledTableHeadCell } from "../helpers/stylesVariables";
-import { useNavigate } from "react-router-dom";
 
 export default function SupplierListPage() {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const { setOpenToast, setToastMessage } = useContext(AppContext);
-  const [list, setList] = useState<SupplierListQuery[]>([]);
+  const [list, setList] = useState<supplier[]>([]);
 
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
         const resp = await axios.get(suppliers_endpoint);
-        setList(resp.data as SupplierListQuery[]);
+        setList(resp.data as supplier[]);
       } catch (error: unknown) {
         setOpenToast(true);
-        setToastMessage("ERRORE chiamata fetchSuppliers");
-        navigate("/");
+        setToastMessage(
+          axios.isAxiosError(error)
+            ? error.message
+            : "ERRORE chiamata fetchEmployees"
+        );
       } finally {
         setLoading(false);
       }

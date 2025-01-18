@@ -7,7 +7,7 @@ export interface appContext {
 }
 
 // SUPPLIER
-export interface SupplierListQuery {
+export interface supplier {
   id: number;
   name?: string;
   address?: string;
@@ -16,7 +16,7 @@ export interface SupplierListQuery {
 }
 
 // EMPLOYEE
-export interface EmployeeListQuery {
+export interface employee {
   id: number;
   code?: string;
   firstName?: string;
@@ -24,26 +24,26 @@ export interface EmployeeListQuery {
   address?: string;
   email?: string;
   phone?: string;
-  department?: EmployeeDepartment;
+  department?: employee_department;
 }
-interface EmployeeDepartment {
+interface employee_department {
   code?: string;
   description?: string;
 }
 
 // CUSTOMERS
-export interface CustomersListQuery {
+export interface customer {
   id: number;
-  name: string;
-  address: string;
-  email: string;
-  phone: string;
-  iban: string;
-  category: CustomersCategory;
+  name?: string;
+  address?: string;
+  email?: string;
+  phone?: string;
+  iban?: string;
+  category?: customer_category;
 }
-interface CustomersCategory {
-  code: string;
-  description: string;
+interface customer_category {
+  code?: string;
+  description?: string;
 }
 
 // MODAL
