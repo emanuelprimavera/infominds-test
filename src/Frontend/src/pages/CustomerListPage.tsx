@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { AppContext } from "../helpers/appContext";
 import { customer } from "../helpers/interfaces";
 import { customers_endpoint } from "../helpers/endpoint";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import {
   Typography,
   TableContainer,
@@ -17,9 +17,12 @@ import {
   Input,
   Button,
   Alert,
+  Link,
 } from "@mui/material";
 import Loading from "../components/Loading";
-import { StyledTableHeadCell } from "../helpers/stylesVariables";
+import { bigButton, StyledTableHeadCell } from "../helpers/stylesVariables";
+import { generateXML } from "../helpers/functions/generateXML";
+import Modal from "../components/Modal";
 
 export default function CustomerListPage() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,6 +31,9 @@ export default function CustomerListPage() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [showAll, setShowAll] = useState<boolean>(false);
+  const [xmlURL, setXmlURL] = useState<string | undefined>("");
+  const [openModal, setOpenModal] = useState(false);
+  const handleModalClose = () => setOpenModal(false);
 
   // GET CUSTOMERS
   const fetchCustomers = async (name?: string, email?: string) => {
@@ -68,71 +74,107 @@ export default function CustomerListPage() {
     setShowAll(false);
   };
 
+  // ----------------  XML ----------------
+
+  const generateCustomersXML = () => {
+    const data = {
+      customers: {
+        customer: customers?.slice(0, 10).map((customer) => ({
+          id: customer.id,
+          name: customer.name,
+          address: customer.address,
+          email: customer.email,
+          phone: customer.phone,
+          iban: customer.iban,
+          category: {
+            code: customer.category?.code,
+            description: customer.category?.description,
+          },
+        })),
+      },
+    };
+    generateXML(data, setXmlURL, setOpenModal);
+  };
+
   useEffect(() => {
     fetchCustomers();
   }, []);
 
   return (
     <>
-      <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
-        Customers
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 4,
-        }}
-      >
-        <Box
-          sx={{
-            gap: 6,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Input
-            disabled={showAll}
-            aria-label="nome cliente"
-            placeholder="Cerca per nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            disabled={showAll}
-            aria-label="email cliente"
-            placeholder="Cerca per email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Box>
+      {/* FILTRI */}
+      <>
+        <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
+          Customers
+        </Typography>
         <Box
           sx={{
             display: "flex",
-            gap: 2,
+            justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: 4,
           }}
         >
-          <Button
-            variant="contained"
-            onClick={fetchFilterCustomers}
-            disabled={
-              (name.trim() === "" && email.trim() === "") || loading || showAll
-            }
+          <Box
+            sx={{
+              gap: 6,
+              display: "flex",
+              alignItems: "center",
+            }}
           >
-            Cerca
-          </Button>
+            <Input
+              disabled={showAll}
+              aria-label="nome cliente"
+              placeholder="Cerca per nome"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Input
+              disabled={showAll}
+              aria-label="email cliente"
+              placeholder="Cerca per email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={fetchFilterCustomers}
+              disabled={
+                (name.trim() === "" && email.trim() === "") ||
+                loading ||
+                showAll
+              }
+            >
+              Cerca
+            </Button>
 
-          <Button
-            variant="contained"
-            onClick={resetFilterCustomers}
-            disabled={!showAll || loading}
-          >
-            Mostra tutti
-          </Button>
+            <Button
+              variant="contained"
+              onClick={resetFilterCustomers}
+              disabled={!showAll || loading}
+            >
+              Mostra tutti
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "green" }}
+              disabled={loading || customers.length === 0}
+              onClick={generateCustomersXML}
+            >
+              Genera XML
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </>
+
       {loading ? (
         <Loading />
       ) : (
@@ -178,6 +220,21 @@ export default function CustomerListPage() {
               </TableBody>
             </Table>
           </TableContainer>
+          {/* MODALE PER DOWNLOAD XML */}
+          <Modal
+            open={openModal}
+            close={handleModalClose}
+            title="Scarica CUSTOMERS XML"
+          >
+            <Link
+              href={xmlURL}
+              download
+              onClick={handleModalClose}
+              sx={bigButton}
+            >
+              DOWNLOAD
+            </Link>
+          </Modal>
         </>
       )}
     </>

@@ -15,19 +15,19 @@ import {
   Link,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { AppContext } from "../helpers/appContext";
 import axios from "axios";
-import Loading from "../components/Loading";
 import { bigButton, StyledTableHeadCell } from "../helpers/stylesVariables";
 import { employees_endpoint } from "../helpers/endpoint";
 import { employee } from "../helpers/interfaces";
-import xml2js from "xml2js";
 import Modal from "../components/Modal";
+import Loading from "../components/Loading";
+import { generateXML } from "../helpers/functions/generateXML";
 
 export default function EmployeeListPage() {
+  // const navigate = useNavigate();
   const { setOpenToast, setToastMessage } = useContext(AppContext);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
@@ -78,11 +78,7 @@ export default function EmployeeListPage() {
 
   // ----------------  XML ----------------
 
-  const generateXML = () => {
-    // istanzio il builder
-    const builder = new xml2js.Builder();
-
-    // struttura del documento xml
+  const generateEmpolyeesXML = () => {
     const data = {
       employees: {
         employee: employees?.slice(0, 10).map((employe) => ({
@@ -99,15 +95,7 @@ export default function EmployeeListPage() {
         })),
       },
     };
-    // genero stringa xml per metterla nel BLOB (il BLOB puo contenere qualsiasi tipo di dato, in questo caso è una stringa)
-    const xmlData = builder.buildObject(data);
-
-    // creo il BLOB e indico nel type il tipo di dato che è xmlData. creando il blob il browser puo "trattarlo" come un file
-    const blob = new Blob([xmlData], { type: "application/xml" });
-
-    // il browser ha bisogno di un link (temporaneo) per scaricare il BLOB quindi lo creo e lo salvo nello state
-    setXmlURL(URL.createObjectURL(blob));
-    setOpenModal(true);
+    generateXML(data, setXmlURL, setOpenModal);
   };
 
   useEffect(() => {
@@ -116,77 +104,79 @@ export default function EmployeeListPage() {
 
   return (
     <>
-      <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
-        Employees
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 4,
-        }}
-      >
-        <Box
-          sx={{
-            gap: 6,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Input
-            disabled={showAll}
-            aria-label="nome dipendente"
-            placeholder="Cerca per nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            disabled={showAll}
-            aria-label="cognome dipendente"
-            placeholder="Cerca per cognome"
-            value={surname}
-            onChange={(e) => setSurname(e.target.value)}
-          />
-        </Box>
+      {/* FILTRI */}
+      <>
+        <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
+          Employees
+        </Typography>
         <Box
           sx={{
             display: "flex",
-            gap: 2,
+            justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: 4,
           }}
         >
-          <Button
-            variant="contained"
-            onClick={fetchFilterEmployees}
-            disabled={
-              (name.trim() === "" && surname.trim() === "") ||
-              loading ||
-              showAll
-            }
+          <Box
+            sx={{
+              gap: 6,
+              display: "flex",
+              alignItems: "center",
+            }}
           >
-            Cerca
-          </Button>
+            <Input
+              disabled={showAll}
+              aria-label="nome dipendente"
+              placeholder="Cerca per nome"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Input
+              disabled={showAll}
+              aria-label="cognome dipendente"
+              placeholder="Cerca per cognome"
+              value={surname}
+              onChange={(e) => setSurname(e.target.value)}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={fetchFilterEmployees}
+              disabled={
+                (name.trim() === "" && surname.trim() === "") ||
+                loading ||
+                showAll
+              }
+            >
+              Cerca
+            </Button>
 
-          <Button
-            variant="contained"
-            onClick={resetFilterEmpolyees}
-            disabled={!showAll || loading}
-          >
-            Mostra tutti
-          </Button>
+            <Button
+              variant="contained"
+              onClick={resetFilterEmpolyees}
+              disabled={!showAll || loading}
+            >
+              Mostra tutti
+            </Button>
 
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: "green" }}
-            disabled={loading}
-            onClick={generateXML}
-          >
-            Genera XML
-          </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "green" }}
+              disabled={loading || employees.length === 0}
+              onClick={generateEmpolyeesXML}
+            >
+              Genera XML
+            </Button>
+          </Box>
         </Box>
-      </Box>
-
+      </>
       {loading ? (
         <Loading />
       ) : (
@@ -237,7 +227,11 @@ export default function EmployeeListPage() {
           </TableContainer>
 
           {/* MODALE PER DOWNLOAD XML */}
-          <Modal open={openModal} close={handleModalClose} title="Scarica XML">
+          <Modal
+            open={openModal}
+            close={handleModalClose}
+            title="Scarica EMPLOYEES XML"
+          >
             <Link
               href={xmlURL}
               download
