@@ -93,7 +93,14 @@ export default function CustomerListPage() {
         })),
       },
     };
-    generateXML(data, setXmlURL, setOpenModal);
+    const { xml_url } = generateXML(data);
+    if (xml_url) {
+      setXmlURL(xml_url);
+      setOpenModal(true);
+    } else {
+      setOpenToast(true);
+      setToastMessage("ERRORE nella generazione dell XML");
+    }
   };
 
   useEffect(() => {
