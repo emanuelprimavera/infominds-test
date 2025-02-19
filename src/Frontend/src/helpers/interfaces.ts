@@ -9,7 +9,7 @@ export interface appContext {
 // SUPPLIER
 export interface supplier {
   id: number;
-  name?: string;
+  name: string;
   address?: string;
   email?: string;
   phone?: string;
@@ -18,9 +18,9 @@ export interface supplier {
 // EMPLOYEE
 export interface employee {
   id: number;
-  code?: string;
-  firstName?: string;
-  lastName?: string;
+  code: string;
+  firstName: string;
+  lastName: string;
   address?: string;
   email?: string;
   phone?: string;
@@ -34,7 +34,7 @@ interface employee_department {
 // CUSTOMERS
 export interface customer {
   id: number;
-  name?: string;
+  name: string;
   address?: string;
   email?: string;
   phone?: string;

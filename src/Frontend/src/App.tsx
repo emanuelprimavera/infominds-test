@@ -5,9 +5,11 @@ import ShellHeader from "./routing/ShellHeader";
 import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter as Router } from "react-router-dom";
 import { AppContext } from "./helpers/appContext";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 function App() {
+  const { openToast, toastMessage, setOpenToast } = useContext(AppContext);
+
   // FUNZIONE PER CHIUDERE IL TOAST DI MUI
   const handleCloseToast = (
     event: React.SyntheticEvent | Event,
@@ -19,16 +21,9 @@ function App() {
 
     setOpenToast(false);
   };
-  const [openToast, setOpenToast] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const contextValue = {
-    openToast,
-    setOpenToast,
-    toastMessage,
-    setToastMessage,
-  };
+
   return (
-    <AppContext.Provider value={contextValue}>
+    <>
       <CssBaseline />
       <Router>
         <ShellHeader />
@@ -42,7 +37,7 @@ function App() {
           />
         </Container>
       </Router>
-    </AppContext.Provider>
+    </>
   );
 }
 

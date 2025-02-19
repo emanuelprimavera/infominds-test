@@ -13,7 +13,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { suppliers_endpoint } from "../helpers/endpoint";
 import Loading from "../components/Loading";
-import { AppContext } from "../helpers/appContext";
+import { AppContext } from "../helpers/appContext.tsx";
 import { supplier } from "../helpers/interfaces";
 import { StyledTableHeadCell } from "../helpers/stylesVariables";
 

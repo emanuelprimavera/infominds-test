@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-import { AppContext } from "../helpers/appContext";
+import { AppContext } from "../helpers/appContext.tsx";
 import axios from "axios";
 import { bigButton, StyledTableHeadCell } from "../helpers/stylesVariables";
 import { employees_endpoint } from "../helpers/endpoint";
@@ -81,7 +81,7 @@ export default function EmployeeListPage() {
   const generateEmpolyeesXML = () => {
     const data = {
       employees: {
-        employee: employees?.slice(0, 10).map((employe) => ({
+        employee: employees.map((employe) => ({
           id: employe.id,
           firstName: employe.firstName,
           lastName: employe.lastName,
@@ -211,7 +211,7 @@ export default function EmployeeListPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {employees?.slice(0, 10).map((row) => (
+                {employees?.map((row) => (
                   <TableRow
                     key={row.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -241,7 +241,7 @@ export default function EmployeeListPage() {
           >
             <Link
               href={xmlURL}
-              download
+              download="employees.xml"
               onClick={handleModalClose}
               sx={bigButton}
             >
